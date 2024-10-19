@@ -1,7 +1,9 @@
 Portfolio Deployment Pipeline
+
 This repository contains the Jenkins pipeline configurations for deploying a static portfolio website using Docker and Kubernetes (K3s).
 
 Prerequisites
+
 Before using this pipeline, ensure you have the following set up:
 
 Jenkins installed with necessary plugins.
@@ -10,9 +12,10 @@ Docker installed on the Jenkins server.
 SonarQube server running for code quality analysis.
 OWASP Dependency Check configured in Jenkins.
 Access to a Docker Hub account.
+
 Directory Structure
-arduino
-Copy code
+
+
 /home/batman/DevOps-projects/K3s/Portfolio/
 ├── deployments/
 │   └── portfolio-deployment.yaml
@@ -20,6 +23,7 @@ Copy code
     └── portfolio-service.yaml
     
 Jenkins Pipeline Overview
+
 The Jenkins pipeline consists of two main pipelines:
 
 Continous Integration (CI) Pipeline
@@ -121,7 +125,6 @@ To ensure the Jenkins pipeline can access the necessary directories and Kubernet
 
 Created and configured .kube directory for the Jenkins user:
 
-
 sudo mkdir -p /var/lib/jenkins/.kube
 sudo chown -R jenkins:jenkins /var/lib/jenkins/.kube
 
@@ -142,6 +145,19 @@ Created a cluster role binding for the Jenkins user:
 
 kubectl create clusterrolebinding jenkins-admin-binding --clusterrole=cluster-admin --user=jenkins
 
+Updated the Kubernetes API server configuration inside .kube/config to reflect the correct IP address using hostname -I:
+
+The 192.168... part is the IP address of your K3s server (obtained via hostname -I).
+The 6443 port is the default port for the Kubernetes API server.
+
+Why This Was Important:
+
+By changing the server address from something like localhost to the actual IP address of your machine, you allowed Jenkins (or any external system) to connect to the K3s cluster, since localhost would only work from the same machine.
+This step is crucial when running Jenkins on a different machine or in a container, so it knows how to reach the K3s cluster.
+
+server: https://<your-k3s-ip>:6443
+
 Conclusion
+
 This pipeline allows for efficient deployment of the portfolio website with continuous integration and deployment capabilities, ensuring code quality and security checks through SonarQube and OWASP Dependency Check.
 
