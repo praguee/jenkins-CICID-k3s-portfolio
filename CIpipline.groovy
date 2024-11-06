@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git changelog: false, credentialsId: 'github', poll: false, url: 'https://github.com/praguee/containerizing-portfolio.git'
+                git changelog: false, credentialsId: 'github', poll: false, url: '<you_github_repo>'
             }
         }
         
@@ -26,7 +26,7 @@ pipeline {
                       -Dsonar.sources=. \
                       -Dsonar.projectName=portfolio-website \
                       -Dsonar.host.url=http://localhost:9000 \
-                      -Dsonar.login=squ_cfb10b8b90d67ba2c50198c8fe7becb4d92436f7'''
+                      -Dsonar.login=<your_sonar_token>'''
             }
         }
         
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     // Running OWASP Dependency Check with NVD API Key
-                    dependencyCheck additionalArguments: "--project 'Portfolio' --scan . --nvdApiKey d8764adb-3b45-4c17-98e2-494f431cb909 --noupdate -f HTML -f XML",
+                    dependencyCheck additionalArguments: "--project 'Portfolio' --scan . --nvdApiKey <your nvd api-key> --noupdate -f HTML -f XML",
                                     odcInstallation: 'DependencyCheck'
                     
                     // Publish the generated OWASP Dependency Check report
