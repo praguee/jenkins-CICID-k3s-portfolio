@@ -1,4 +1,4 @@
-    pipeline {
+pipeline {
     agent any
     
     tools {
@@ -26,7 +26,7 @@
                       -Dsonar.sources=. \
                       -Dsonar.projectName=portfolio-website \
                       -Dsonar.host.url=http://localhost:9000 \
-                      -Dsonar.login=<your sonar token>'''
+                      -Dsonar.login=squ_cfb10b8b90d67ba2c50198c8fe7becb4d92436f7'''
             }
         }
         
@@ -34,7 +34,7 @@
             steps {
                 script {
                     // Running OWASP Dependency Check with NVD API Key
-                    dependencyCheck additionalArguments: "--project 'Portfolio' --scan . --nvdApiKey <your nvd api key>",
+                    dependencyCheck additionalArguments: "--project 'Portfolio' --scan . --nvdApiKey d8764adb-3b45-4c17-98e2-494f431cb909 --noupdate -f HTML -f XML",
                                     odcInstallation: 'DependencyCheck'
                     
                     // Publish the generated OWASP Dependency Check report
@@ -44,22 +44,22 @@
         }
         
         stage('Build & Push Docker Image') {
-    steps {
-        script {
-            withDockerRegistry(credentialsId: 'Dockerhub', toolName: 'docker') {
-                // List workspace content for debugging
-                sh 'ls -la'
-                
-                // Update the Dockerfile path if it's not in the docker directory
-                sh "docker build -t portfolio:latest -f Dockerfile ."
-                sh "docker tag portfolio:latest prrague/portfolio:latest"
-                sh "docker push prrague/portfolio:latest"
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'Dockerhub', toolName: 'docker') {
+                        // List workspace content for debugging
+                        sh 'ls -la'
+                        
+                        // Update the Dockerfile path if it's not in the docker directory
+                        sh "docker build -t portfolio:latest -f Dockerfile ."
+                        sh "docker tag portfolio:latest prrague/portfolio:latest"
+                        sh "docker push prrague/portfolio:latest"
+                    }
+                }
             }
         }
-    }
-}
-   
-        stage('Trigger CD Pipeline'){
+        
+        stage('Trigger CD Pipeline') {
             steps {
                 build job: "CD pipeline", wait: true
             }

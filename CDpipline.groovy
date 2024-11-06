@@ -21,6 +21,12 @@ pipeline {
 
                         // Optionally, confirm that the pods are running
                         sh "kubectl get pods -l app=portfolio"
+
+                        // Rollout restart to apply the new changes
+                        sh "kubectl rollout restart deployment portfolio-deployment"
+
+                        // Verify the status of the deployment
+                        sh "kubectl get deployment portfolio-deployment"
                     }
                 }
             }
